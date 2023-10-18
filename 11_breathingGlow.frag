@@ -13,7 +13,7 @@ float glow(float d, float str, float thickness){
 }
 
 void main() {
-    vec2 uv = gl_FragCoord.xy/u_resolution.xy;
+    vec2 uv = gl_FragCoord.xy / u_resolution.xy;
     uv.x *= u_resolution.x/u_resolution.y;
     uv= uv*2.0-1.0;
 
@@ -21,15 +21,19 @@ void main() {
 
     //定義圓環
     float dist = length(uv);
-    float circle_dist = abs(dist-0.512);								//光環大小
+    float circle_dist = abs(dist-0.512);//光環大小
     
-    //動態呼吸
-    float breathing=sin(u_time*2.0*pi/4.0)*0.5+0.5;						//option1
-    //float breathing=(exp(sin(u_time/2.0*pi)) - 0.36787944)*0.42545906412; 			//option2 正確
-    //float strength =(0.2*breathing*dir+0.180);			//[0.2~0.3]			//光暈強度加上動態時間營造呼吸感
-    float strength =(0.2*breathing+0.180);			//[0.2~0.3]			//光暈強度加上動態時間營造呼吸感
-    float thickness=(0.1*breathing+0.084);			//[0.1~0.2]			//光環厚度 營造呼吸感
-    float glow_circle = glow(circle_dist, strength, thickness);
+    //動態呼吸 //我是9.5個呼吸 /4-> 以一個呼吸四秒算的話
+    //float breathing=sin(u_time * 1.0 * pi /6.0)*0.5+0.5;	//option1
+    //option2 蘋果的專利! 波峰和波谷有點不一樣
+    float breathing=(exp(sin(u_time/5.0*pi)) - 0.36787944)*0.42545906412; 
+    //float strength =(0.2*breathing*dir+0.180);
+    //[0.2~0.3]	 //光暈強度加上動態時間營造呼吸感
+    float strength =(0.2 * breathing + 0.180);//[0.2~0.3] //光暈強度加上動態時間營造呼吸感
+    float thickness=(0.1 * breathing + 0.084);//[0.1~0.2] //光環厚度 營造呼吸感
+
+    //定質的話就不會動，但是如果也會動的話(上面的數值)那就會有動態
+    float glow_circle = glow(circle_dist, strength, thickness); 
     gl_FragColor = vec4(vec3(glow_circle)*vec3(1.0, 0.5, 0.25),1.0);
 }
 
